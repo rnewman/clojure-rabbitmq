@@ -11,11 +11,7 @@ Clojure client for rabbitmq AMQP
    <pre>
    <code>
    (use 'com.github.icylisper.rabbitmq)
-   </code>
-   </pre>
 
-   <pre>
-   <code>
    (let [conn-map { :username "guest"
     	            :password "guest"
 		    :host "localhost"
@@ -29,5 +25,5 @@ Clojure client for rabbitmq AMQP
        (bind-queue conn-map channel)
        (publish conn-map channel "message"))
    </code>   
-   </pre>
+
 	   
