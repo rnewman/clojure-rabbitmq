@@ -7,48 +7,42 @@
 	     AMQP
 	     ConnectionFactory)))
 
+(defn connect [conn-map]
+  (let [params (doto (new ConnectionParameters)
+		(.setUsername (:username conn-map))
+		(.setPassword (:password conn-map))
+		(.setVirtualHost (:virtual-host conn-map))
+		(.setRequestedHeartbeat 0))
+       conn (.newConnection (new ConnectionFactory params)
+	       (:host conn-map) (:port conn-map))
+       channel (.createChannel conn)]
+    channel))
 
-(def connection-params
-  { :username "guest"
-    :password "guest"
-    :host "localhost"
-    :port 5672
-    :virtual-host "/"
-    :type "direct"
-    :exchange "sorting-room"
-    :queue "po-box"
-    :routing-key "tata"})
+(defn bind-queue [conn-map channel]
+  (.exchangeDeclare channel (:exchange conn-map) (:type conn-map))
+  (.queueDeclare channel (:queue conn-map))
+  (.queueBind channel (:queue conn-map) (:exchange conn-map) (:routing-key conn-map)))
 
-(def params
-  (doto (new ConnectionParameters)
-    (.setUsername "guest")
-    (.setPassword "guest")
-    (.setVirtualHost "/")
-    (.setRequestedHeartbeat 0)))
-
-(def conn (.newConnection (new ConnectionFactory params) "localhost" 5672))
-(def channel (.createChannel conn))
-
-(def mq-type "direct")
-(def mq-exchange "sorting-room")
-(def mq-queue "po-box")
-(def routing-key "tata")
-
-(defn connect []
-  (.exchangeDeclare channel mq-exchange mq-type)
-  (.queueDeclare channel mq-queue)
-  (.queueBind channel mq-queue mq-exchange routing-key))
-
-(defn publish [message]
+(defn publish [conn-map channel message]
   (let [msg-bytes (.getBytes message)]
-    (.basicPublish channel mq-exchange routing-key nil msg-bytes)))
+    (.basicPublish channel (:exchange conn-map) (:routing-key conn-map) nil msg-bytes)))
 
-(defn disconnect []
+(defn disconnect [channel conn]
   (map (memfn close) [channel conn]))
 
 (comment
-  (connect)
-  (publish "message"))
-
+  ; usage
+  (let [conn-map { :username "guest"
+		   :password "guest"
+		   :host "localhost"
+		   :port 5672
+		   :virtual-host "/"
+		   :type "direct"
+		   :exchange "sorting-room"
+		   :queue "po-box"
+		   :routing-key "tata"}
+	    channel (connect conn-map)]
+    (bind-queue conn-map channel)
+    (publish conn-map channel "message")))
 
 
