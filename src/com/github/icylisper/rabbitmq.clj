@@ -33,7 +33,7 @@
        channel (.createChannel conn)]
     [conn channel]))
 
-(defn bind-queue [conn-map channel]
+(defn channel-bind [conn-map channel]
   (.exchangeDeclare channel (:exchange conn-map) (:type conn-map))
   (.queueDeclare channel (:queue conn-map))
   (.queueBind channel (:queue conn-map) (:exchange conn-map) (:routing-key conn-map)))
@@ -81,7 +81,7 @@
 
   
   (let [[conn channel] connection]
-    (bind-queue conn-map channel)
+    (channel-bind conn-map channel)
     (publish conn-map channel "message"))
 
   ;; FIXME : replace with with-connection
@@ -97,7 +97,7 @@
 		   :queue "po-box"
 		   :routing-key "tata"}
 	[conn channel] (connect conn-map)]
-    (bind-queue conn-map channel)
+    (channel-bind conn-map channel)
     (publish conn-map channel "message")))
 
 
