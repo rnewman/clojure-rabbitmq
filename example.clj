@@ -1,6 +1,7 @@
 
 (use 'com.github.icylisper.rabbitmq)
 
+;; example(1)
 (defonce conn-map { :username "guest"
 		    :password "guest"
 		    :host "localhost"
@@ -19,8 +20,8 @@
   (channel-bind conn-map channel)
   (publish conn-map channel "message"))
 
-;; OR
 
+;; example(2)
 (let [conn-map { :username "guest"
 		 :password "guest"
 		 :host "localhost"
