@@ -10,7 +10,8 @@ Clojure client for rabbitmq AMQP
 * USAGE
 
    (use 'net.icylisper.rabbitmq)
-   (publish "<message>" :exchange :queue :host :virtualhost)
-   (broadcast "message" :exchange :queue :host :virtualhost)
+   (connect)
+   (publish "<message>")
+
 
    
