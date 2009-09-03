@@ -81,7 +81,7 @@
 
   
   (let [[conn channel] connection]
-    (channel-bind conn-map channel)
+    (bind-channel conn-map channel)
     (publish conn-map channel "message"))
 
   ;; FIXME : replace with with-connection
@@ -97,7 +97,7 @@
 		   :queue "po-box"
 		   :routing-key "tata"}
 	[conn channel] (connect conn-map)]
-    (channel-bind conn-map channel)
+    (bind-channel conn-map channel)
     (publish conn-map channel "message")))
 
 

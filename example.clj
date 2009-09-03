@@ -17,7 +17,7 @@
 ;; (m-v-b [conn channel] (connect conn-map))
 
 (let [[conn channel] connection]
-  (channel-bind conn-map channel)
+  (bind-channel conn-map channel)
   (publish conn-map channel "message"))
 
 
@@ -32,5 +32,5 @@
 		 :queue "po-box"
 		 :routing-key "tata"}
        channel (connect conn-map)]
-  (channel-bind conn-map channel)
+  (bind-channel conn-map channel)
   (publish conn-map channel "message"))
