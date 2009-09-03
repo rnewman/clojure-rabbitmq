@@ -7,6 +7,18 @@
 	     AMQP
 	     ConnectionFactory)))
 
+
+(def connection-params
+  { :username "guest"
+    :password "guest"
+    :host "localhost"
+    :port 5672
+    :virtual-host "/"
+    :type "direct"
+    :exchange "sorting-room"
+    :queue "po-box"
+    :routing-key "tata"})
+
 (def params
   (doto (new ConnectionParameters)
     (.setUsername "guest")
@@ -14,8 +26,7 @@
     (.setVirtualHost "/")
     (.setRequestedHeartbeat 0)))
 
-(def conn (.newConnection (new ConnectionFactory) "localhost" 5672))
-
+(def conn (.newConnection (new ConnectionFactory params) "localhost" 5672))
 (def channel (.createChannel conn))
 
 (def mq-type "direct")
