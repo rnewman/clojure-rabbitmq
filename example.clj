@@ -10,6 +10,7 @@
 		    :exchange "sorting-room"
 		    :queue "po-box"
 		    :routing-key "tata"})
+
 (defonce connection (connect conn-map))
 ;; TODO
 ;; (m-v-b [conn channel] (connect conn-map))
@@ -17,7 +18,6 @@
 (let [[conn channel] connection]
   (bind-queue conn-map channel)
   (publish conn-map channel "message"))
-
 
 ;; OR
 
