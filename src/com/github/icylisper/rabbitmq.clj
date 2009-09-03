@@ -33,7 +33,7 @@
        channel (.createChannel conn)]
     [conn channel]))
 
-(defn channel-bind [conn-map channel]
+(defn bind-channel [conn-map channel]
   (.exchangeDeclare channel (:exchange conn-map) (:type conn-map))
   (.queueDeclare channel (:queue conn-map))
   (.queueBind channel (:queue conn-map) (:exchange conn-map) (:routing-key conn-map)))
