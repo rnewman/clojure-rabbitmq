@@ -9,7 +9,7 @@ Clojure client for rabbitmq AMQP
 
 * USAGE
 
-   (use 'net.icylisper.rabbitmq)
+   (use 'com.github.icylisper.rabbitmq)
    (connect)
    (publish "<message>")
 

@@ -1,5 +1,5 @@
 
-(ns net.icylisper.rabbitmq
+(ns com.github.icylisper.rabbitmq
   (:import (com.rabbitmq.client
 	     ConnectionParameters
 	     Connection
