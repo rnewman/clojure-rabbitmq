@@ -9,25 +9,35 @@
 
 (def params
   (doto (new ConnectionParameters)
-    (.setUsername "")
-    (.setPassword "")
+    (.setUsername "guest")
+    (.setPassword "guest")
     (.setVirtualHost "/")
     (.setRequestedHeartbeat 0)))
 
-(def conn (.newConnection (new connectionFactory) "localhost" 5672))
+(def conn (.newConnection (new ConnectionFactory) "localhost" 5672))
 
 (def channel (.createChannel conn))
 
-(def connect [exchange queue type routing-key]
-  (.exchangeDeclare channel exchange)
-  (.queueDeclare channel queue)
-  (.queueBind channel queue exchange routing-key))
+(def mq-type "direct")
+(def mq-exchange "sorting-room")
+(def mq-queue "po-box")
+(def routing-key "tata")
 
-(def publish [message exchange routing-key]
+(defn connect []
+  (.exchangeDeclare channel mq-exchange mq-type)
+  (.queueDeclare channel mq-queue)
+  (.queueBind channel mq-queue mq-exchange routing-key))
+
+(defn publish [message]
   (let [msg-bytes (.getBytes message)]
-    (.basicPublish channel exchange routing-key nil msg-bytes)))
+    (.basicPublish channel mq-exchange routing-key nil msg-bytes)))
 
-(def disconnect []
+(defn disconnect []
   (map (memfn close) [channel conn]))
+
+(comment
+  (connect)
+  (publish "message"))
+
 
 
