@@ -1,11 +1,26 @@
 
 (ns com.github.icylisper.rabbitmq
+  (:gen-class)
   (:import (com.rabbitmq.client
 	     ConnectionParameters
 	     Connection
 	     Channel
 	     AMQP
-	     ConnectionFactory)))
+	     ConnectionFactory
+	     QueueingConsumer)))
+
+
+(defn connected? [conn-map]
+  true)
+
+(defmacro with-channel
+  [[var connection] & body]
+  `(with-open [~var (.createChannel connection)]
+     ~@body))
+
+(defmacro with-connection
+  [] []
+  )
 
 (defn connect [conn-map]
   (let [params (doto (new ConnectionParameters)
@@ -16,7 +31,7 @@
        conn (.newConnection (new ConnectionFactory params)
 	       (:host conn-map) (:port conn-map))
        channel (.createChannel conn)]
-    channel))
+    [conn channel]))
 
 (defn bind-queue [conn-map channel]
   (.exchangeDeclare channel (:exchange conn-map) (:type conn-map))
@@ -30,8 +45,48 @@
 (defn disconnect [channel conn]
   (map (memfn close) [channel conn]))
 
+
+;;;; AMPQ Queue as a sequence
+(defn delivery-seq [ch q]
+  (lazy-seq
+    (let [d (.nextDelivery q)
+          m (String. (.getBody d))]
+      (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
+      (cons m (delivery-seq ch q)))))
+
+(defn queue-seq [conn queue-name]
+  "Reutrn a sequence of the messages in queue with name queue-name"
+  (let [ch (.createChannel conn)]
+    (.queueDeclare ch queue-name)
+    (let [consumer (QueueingConsumer. ch)]
+      (.basicConsume ch queue-name consumer)
+      (delivery-seq ch consumer))))
+
+
 (comment
   ; usage
+
+  (defonce conn-map { :username "guest"
+		   :password "guest"
+		   :host "localhost"
+		   :port 5672
+		   :virtual-host "/"
+		   :type "direct"
+		   :exchange "sorting-room"
+		   :queue "po-box"
+		   :routing-key "tata"})
+  (defonce connection (connect conn-map))
+  ;; TODO
+  ;; (m-v-b [conn channel] (connect conn-map))
+
+  
+  (let [[conn channel] connection]
+    (bind-queue conn-map channel)
+    (publish conn-map channel "message"))
+
+  ;; FIXME : replace with with-connection
+  
+  :or 
   (let [conn-map { :username "guest"
 		   :password "guest"
 		   :host "localhost"
@@ -41,8 +96,10 @@
 		   :exchange "sorting-room"
 		   :queue "po-box"
 		   :routing-key "tata"}
-	    channel (connect conn-map)]
+	[conn channel] (connect conn-map)]
     (bind-queue conn-map channel)
     (publish conn-map channel "message")))
+
+
 
 
