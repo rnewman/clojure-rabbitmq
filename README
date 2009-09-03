@@ -1,0 +1,16 @@
+
+Clojure client for rabbitmq AMQP
+
+* INSTALLATION
+
+  - Get the latest java rabbitmq-client from 
+    http://www.rabbitmq.com/java-client.html
+
+
+* USAGE
+
+   (use 'net.icylisper.rabbitmq)
+   (publish "<message>" :exchange :queue :host :virtualhost)
+   (broadcast "message" :exchange :queue :host :virtualhost)
+
+   
