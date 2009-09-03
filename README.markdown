@@ -21,9 +21,10 @@ Clojure client for rabbitmq AMQP
 		    :exchange "sorting-room"
 		    :queue "po-box"
 		    :routing-key "tata"}
- 	 channel (connect conn-map)]
+ 	channel (connect conn-map)]
        (bind-queue conn-map channel)
        (publish conn-map channel "message"))
    </code>   
+  </pre>
 
 	   
