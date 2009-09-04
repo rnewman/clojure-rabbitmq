@@ -62,7 +62,6 @@
       (.basicConsume ch queue-name consumer)
       (delivery-seq ch consumer))))
 
-
 (comment
   ; usage
 

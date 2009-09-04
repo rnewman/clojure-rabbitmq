@@ -31,6 +31,6 @@
 		 :exchange "sorting-room"
 		 :queue "po-box"
 		 :routing-key "tata"}
-       channel (connect conn-map)]
+     [conn channel] (connect conn-map)]
   (bind-channel conn-map channel)
   (publish conn-map channel "message"))
