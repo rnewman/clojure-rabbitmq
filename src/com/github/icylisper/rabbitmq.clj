@@ -59,14 +59,26 @@
       (.basicConsume ch queue-name consumer)
       (delivery-seq ch consumer))))
 
+
+;;; consumer routines
 (defn consume-wait [conn-map channel]
   (let [consumer (QueueingConsumer. channel)]
     (.queueDeclare channel (:queue conn-map))
-    (.basicConsume channel (:queue conn-map) consumer)
+    (.basicConsume channel (:queue conn-map) false consumer)
+    (while true
+      (let [d (.nextDelivery consumer)
+          m (String. (.getBody d))]
+	(do
+	  (println "got message" m)
+	  (.basicAck channel (.. d getEnvelope getDeliveryTag) false))))))
+
+(defn consume-poll [conn-map channel]
+  (let [consumer (QueueingConsumer. channel)]
+    (.queueDeclare channel (:queue conn-map))
+    (.basicConsume channel (:queue conn-map) false consumer)
     (let [d (.nextDelivery consumer)
           m (String. (.getBody d))]
-      (.basicAck channel (.. d getEnvelope getDeliveryTag) false)
-      m)))
-
-
+	(do
+	  (println "got message" m)
+	  (.basicAck channel (.. d getEnvelope getDeliveryTag) false)))))
 
