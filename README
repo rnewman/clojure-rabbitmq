@@ -4,10 +4,14 @@ Clojure client for rabbitmq (AMQP)
 * INSTALLATION
     Get the latest java rabbitmq-client from http://www.rabbitmq.com/java-client.html
 
+      cd clojure-rabbitmq
+      ant 
+    Add the jar to your classpath
+
 
 * USAGE and API
 
    (use 'com.github.icylisper.rabbitmq)
-   see examples/publisher and examples/consumer
+   see example/publisher and example/consumer
 
 
