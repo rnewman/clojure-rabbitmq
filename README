@@ -5,7 +5,9 @@ Clojure client for rabbitmq (AMQP)
     Get the latest java rabbitmq-client from http://www.rabbitmq.com/java-client.html
 
 
-* USAGE  
+* USAGE and API
 
    (use 'com.github.icylisper.rabbitmq)
-   see example.clj
+   see examples/publisher and examples/consumer
+
+
