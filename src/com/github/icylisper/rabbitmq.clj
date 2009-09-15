@@ -7,6 +7,7 @@
 	     Channel
 	     AMQP
 	     ConnectionFactory
+	     Consumer
 	     QueueingConsumer)))
 
 
@@ -18,9 +19,6 @@
   `(with-open [~var (.createChannel connection)]
      ~@body))
 
-(defmacro with-connection
-  [] []
-  )
 
 (defn connect [conn-map]
   (let [params (doto (new ConnectionParameters)
@@ -45,7 +43,6 @@
 (defn disconnect [channel conn]
   (map (memfn close) [channel conn]))
 
-
 ;;;; AMPQ Queue as a sequence
 (defn delivery-seq [ch q]
   (lazy-seq
@@ -55,50 +52,21 @@
       (cons m (delivery-seq ch q)))))
 
 (defn queue-seq [conn queue-name]
-  "Reutrn a sequence of the messages in queue with name queue-name"
+  "Return a sequence of the messages in queue with name queue-name"
   (let [ch (.createChannel conn)]
     (.queueDeclare ch queue-name)
     (let [consumer (QueueingConsumer. ch)]
       (.basicConsume ch queue-name consumer)
       (delivery-seq ch consumer))))
 
-(comment
-  ; usage
-
-  (defonce conn-map { :username "guest"
-		   :password "guest"
-		   :host "localhost"
-		   :port 5672
-		   :virtual-host "/"
-		   :type "direct"
-		   :exchange "sorting-room"
-		   :queue "po-box"
-		   :routing-key "tata"})
-  (defonce connection (connect conn-map))
-  ;; TODO
-  ;; (m-v-b [conn channel] (connect conn-map))
-
-  
-  (let [[conn channel] connection]
-    (bind-channel conn-map channel)
-    (publish conn-map channel "message"))
-
-  ;; FIXME : replace with with-connection
-  
-  :or 
-  (let [conn-map { :username "guest"
-		   :password "guest"
-		   :host "localhost"
-		   :port 5672
-		   :virtual-host "/"
-		   :type "direct"
-		   :exchange "sorting-room"
-		   :queue "po-box"
-		   :routing-key "tata"}
-	[conn channel] (connect conn-map)]
-    (bind-channel conn-map channel)
-    (publish conn-map channel "message")))
-
+(defn consume-wait [conn-map channel]
+  (let [consumer (QueueingConsumer. channel)]
+    (.queueDeclare channel (:queue conn-map))
+    (.basicConsume channel (:queue conn-map) consumer)
+    (let [d (.nextDelivery consumer)
+          m (String. (.getBody d))]
+      (.basicAck channel (.. d getEnvelope getDeliveryTag) false)
+      m)))
 
 
 
