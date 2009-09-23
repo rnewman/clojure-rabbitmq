@@ -13,20 +13,28 @@
 
 (defonce connection (rabbitmq/connect conn-map))
 
-;; (def c (ref 0))
+(def c (ref 0))
 
-;; (while true
-;;   (dosync (alter c inc))
-;;   (println "cycle: " @c)
+(while true
+  (dosync (alter c inc))
+  (println "cycle: " @c)
 
-;;   ;; publish
-;;   (let [[_ channel] connection
-;; 	message        (rabbitmq/consume-poll conn-map channel)]
-;;     (println "rabbitmq consumer : got message" message))
+  ;; publish
+  (let [[_ channel] connection
+	message        (rabbitmq/consume-poll conn-map channel)]
+    (println "rabbitmq consumer : got message" message))
   
-;;   (Thread/sleep 1000))
+  (Thread/sleep 1000))
 
 
-(let [[_ channel] connection]
-  (rabbitmq/consume-wait conn-map channel))
+
+;; (let [[_ channel] connection]
+;;   (println (rabbitmq/consume-poll conn-map channel)))
+
+;; (let [[conn channel] connection]
+;;   (println (rabbitmq/queue-seq conn channel conn-map)))
+
+
+
+
 
