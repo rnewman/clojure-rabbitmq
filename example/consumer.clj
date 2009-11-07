@@ -31,5 +31,5 @@
 ;;   (println (rabbitmq/consume-poll conn-map channel)))
 
 ;; (let [[conn channel] connection]
-;;   (println (rabbitmq/queue-seq conn channel conn-map)))
+;;   (println (rabbitmq/queue-seq channel conn-map)))
 
