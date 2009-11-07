@@ -21,7 +21,7 @@ Ensure that `clojure-rabbitmq.jar` and the RabbitMQ jars are in your classpath.
 
 Then:
 
-   (use 'com.github.icylisper.rabbitmq)
+    (use 'com.github.icylisper.rabbitmq)
 
 
 See `example/publisher.clj` and `example/consumer.clj` for usage.
