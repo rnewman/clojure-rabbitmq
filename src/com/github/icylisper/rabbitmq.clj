@@ -64,14 +64,19 @@
       (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
       (cons m (delivery-seq ch q)))))
 
-(defn queue-seq [conn
-                 #^Channel ch
-                 {q :queue}]
+(defn queue-seq
   "Return a sequence of the messages in queue with name queue-name"
-  (.queueDeclare ch q)
-  (let [consumer (QueueingConsumer. ch)]
-      (.basicConsume ch q consumer)
-      (delivery-seq ch consumer)))
+  ([#^Channel ch
+    {q :queue}]
+   (.queueDeclare ch q)
+   (let [consumer (QueueingConsumer. ch)]
+     (.basicConsume ch q consumer)
+     (delivery-seq ch consumer)))
+  ([conn
+    #^Channel ch
+    c]
+   (queue-seq ch c)))
+  
 
 ;;; consumer routines
 (defn consume-wait [c #^Channel ch]
