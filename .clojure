@@ -1,0 +1,1 @@
+clojure-rabbitmq.jar:lib/commons-cli-1.1.jar:lib/commons-io-1.2.jar:lib/rabbitmq-client.jar
