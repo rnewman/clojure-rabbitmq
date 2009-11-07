@@ -35,6 +35,10 @@
         <path location="${contrib.jar}"/>
         <path location="${build.dir}"/>
         <path location="${source.dir}"/>
+        
+        <path location="lib/commons-cli-1.1.jar"/>
+        <path location="lib/commons-io-1.2.jar"/>
+        <path location="lib/rabbitmq-client.jar"/>
       </classpath>
       <sysproperty key="clojure.compile.path" value="${build.dir}"/>
       <arg value="com.github.icylisper.rabbitmq"/>
