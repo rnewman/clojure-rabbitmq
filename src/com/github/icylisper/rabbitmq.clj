@@ -1,14 +1,15 @@
+(set! *warn-on-reflection* true)
 
 (ns com.github.icylisper.rabbitmq
   (:gen-class)
   (:import (com.rabbitmq.client
-	     ConnectionParameters
-	     Connection
-	     Channel
-	     AMQP
-	     ConnectionFactory
-	     Consumer
-	     QueueingConsumer)))
+             ConnectionParameters
+             Connection
+             Channel
+             AMQP
+             ConnectionFactory
+             Consumer
+             QueueingConsumer)))
 
 
 ;; abbreviatons:
@@ -21,38 +22,51 @@
 (defn connected? [cm]
   true)
 
-(defn connect [c]
-  (let [params (doto (new ConnectionParameters)
-		(.setUsername (:username c))
-		(.setPassword (:password c))
-		(.setVirtualHost (:virtual-host c))
-		(.setRequestedHeartbeat 0))
-       conn (.newConnection (new ConnectionFactory params)
-	       (:host c) (:port c))
-       ch (.createChannel conn)]
-    [conn ch]))
+(defn connect [{:keys [username password virtual-host port
+                       #^String host]}]
+  (let [#^ConnectionParameters params
+        (doto (new ConnectionParameters)
+          (.setUsername username)
+          (.setPassword password)
+          (.setVirtualHost virtual-host)
+          (.setRequestedHeartbeat 0))
+        
+        #^Connection conn
+        (let [#^ConnectionFactory f
+              (new ConnectionFactory params)]
+          (.newConnection f host (int port)))]
+    
+    [conn (.createChannel conn)]))
 
-(defn bind-channel [c ch]
-  (.exchangeDeclare ch (:exchange c) (:type c))
-  (.queueDeclare ch (:queue c))
-  (.queueBind ch (:queue c) (:exchange c) (:routing-key c)))
+(defn bind-channel [{:keys [exchange type queue routing-key]}
+                    #^Channel ch]
+  (.exchangeDeclare ch exchange type)
+  (.queueDeclare ch queue)
+  (.queueBind ch queue exchange routing-key))
 
-(defn publish [c ch m]
+(defn publish [{:keys [exchange routing-key]}
+               #^Channel ch
+               #^String m]
   (let [msg-bytes (.getBytes m)]
-    (.basicPublish ch (:exchange c) (:routing-key c) nil msg-bytes)))
+    (.basicPublish ch exchange routing-key nil msg-bytes)))
 
-(defn disconnect [ch conn]
-  (map (memfn close) [ch conn]))
+(defn disconnect [#^Channel ch
+                  #^Connection conn]
+  (.close ch)
+  (.close conn))
 
 ;;;; AMPQ Queue as a sequence
-(defn delivery-seq [ch q]
+(defn delivery-seq [#^Channel ch
+                    #^QueueingConsumer q]
   (lazy-seq
     (let [d (.nextDelivery q)
           m (String. (.getBody d))]
       (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
       (cons m (delivery-seq ch q)))))
 
-(defn queue-seq [conn ch {q :queue}]
+(defn queue-seq [conn
+                 #^Channel ch
+                 {q :queue}]
   "Return a sequence of the messages in queue with name queue-name"
   (.queueDeclare ch q)
   (let [consumer (QueueingConsumer. ch)]
@@ -60,7 +74,7 @@
       (delivery-seq ch consumer)))
 
 ;;; consumer routines
-(defn consume-wait [c ch]
+(defn consume-wait [c #^Channel ch]
   (let [consumer (QueueingConsumer. ch)]
     (.queueDeclare ch (:queue c))
     (.basicConsume ch (:queue c) false consumer)
@@ -68,13 +82,12 @@
       (let [d (.nextDelivery consumer)
           m (String. (.getBody d))]
         (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
-	m))))
+        m))))
 
-(defn consume-poll [c ch]
+(defn consume-poll [c #^Channel ch]
   (let [consumer (QueueingConsumer. ch)]
     (.queueDeclare ch (:queue c))
     (.basicConsume ch (:queue c) false consumer)
     (let [d (.nextDelivery consumer)
           m (String. (.getBody d))]
       m)))
-
