@@ -38,10 +38,10 @@
     
     [conn (.createChannel conn)]))
 
-(defn bind-channel [{:keys [exchange type queue routing-key]}
+(defn bind-channel [{:keys [exchange type queue routing-key durable]}
                     #^Channel ch]
-  (.exchangeDeclare ch exchange type)
-  (.queueDeclare ch queue)
+  (.exchangeDeclare ch exchange type durable)
+  (.queueDeclare ch queue durable)
   (.queueBind ch queue exchange routing-key))
 
 (defn publish [{:keys [exchange routing-key]}
