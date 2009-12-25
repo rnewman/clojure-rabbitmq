@@ -55,7 +55,7 @@
   (.close ch)
   (.close conn))
 
-;;;; AMPQ Queue as a sequence
+;;;; AMQP Queue as a sequence
 (defn delivery-seq [#^Channel ch
                     #^QueueingConsumer q]
   (lazy-seq
@@ -64,14 +64,23 @@
       (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
       (cons m (delivery-seq ch q)))))
 
+(defn #^QueueingConsumer
+  declare-queue-and-consumer
+  "Return a QueueingConsumer with the appropriate settings."
+  [#^Channel ch queue prefetch]
+  (.queueDeclare ch queue)
+  (when prefetch
+    (.basicQos ch prefetch)
+    (QueueingConsumer. ch)))
+
 (defn queue-seq
   "Return a sequence of the messages in queue with name queue-name"
   ([#^Channel ch
-    {q :queue}]
-   (.queueDeclare ch q)
-   (let [consumer (QueueingConsumer. ch)]
-     (.basicConsume ch q consumer)
-     (delivery-seq ch consumer)))
+    {:keys [queue prefetch]}]
+     (let [consumer (declare-queue-and-consumer ch queue prefetch)]
+       (.basicConsume ch queue consumer)     
+       (delivery-seq ch consumer)))
+  
   ([conn
     #^Channel ch
     c]
@@ -79,20 +88,28 @@
   
 
 ;;; consumer routines
-(defn consume-wait [c #^Channel ch]
-  (let [consumer (QueueingConsumer. ch)]
-    (.queueDeclare ch (:queue c))
-    (.basicConsume ch (:queue c) false consumer)
-    (while true
-      (let [d (.nextDelivery consumer)
-          m (String. (.getBody d))]
-        (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
-        m))))
+(defn consume-wait
+  ([c #^Channel ch {:keys [prefetch]}]
+     (let [consumer (declare-queue-and-consumer
+                     ch (:queue c)
+                     prefetch)]
+       (.basicConsume ch (:queue c) false consumer)
+       (while true
+              (let [d (.nextDelivery consumer)
+                    m (String. (.getBody d))]
+                (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
+                m))))
+  ([c #^Channel ch]
+     (consume-wait c ch {})))
 
-(defn consume-poll [c #^Channel ch]
-  (let [consumer (QueueingConsumer. ch)]
-    (.queueDeclare ch (:queue c))
-    (.basicConsume ch (:queue c) false consumer)
-    (let [d (.nextDelivery consumer)
-          m (String. (.getBody d))]
-      m)))
+(defn consume-poll
+  ([c #^Channel ch {:keys [prefetch]}]
+     (let [consumer (declare-queue-and-consumer
+                     ch (:queue c)
+                     prefetch)]
+        (.basicConsume ch (:queue c) false consumer)
+        (let [d (.nextDelivery consumer)
+              m (String. (.getBody d))]
+          m)))
+  ([c #^Channel ch]
+     (consume-poll c ch {})))
