@@ -25,7 +25,10 @@
                        :queue "po-box"
                        :durable true
                        :routing-key "<somekey>"})
+    (def c (ref 0))
+  
     (defonce connection (connect conn-map))
+
     (let [[conn channel] connection]
       (do
         (rabbitmq/bind-channel conn-map channel)
