@@ -17,6 +17,8 @@
 See `example/publisher.clj` and `example/consumer.clj` for usage.
 
 To test connection to the rabbitmq server, run:
-example/test-connection.clj
+  example/test-connection.clj
 
+To test publishing of messages, run:
+  example/publisher.clj
 
