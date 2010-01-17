@@ -1,6 +1,6 @@
 (set! *warn-on-reflection* true)
 
-(ns com.github.icylisper.rabbitmq
+(ns org.clojars.rabbitmq
   (:gen-class)
   (:import (com.rabbitmq.client
              ConnectionParameters
