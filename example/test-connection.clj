@@ -14,6 +14,7 @@ exec java -cp "lib/*:$PWD/*" clojure.main "$0" -- "$@"
                    :type "direct"
                    :exchange "sorting-room"
                    :queue "po-box"
+                   :durable true
                    :routing-key "tata"})
 
 (println "Connecting ...")

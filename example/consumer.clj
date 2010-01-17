@@ -9,6 +9,7 @@
                    :type "direct"
                    :exchange "sorting-room"
                    :queue "po-box"
+                   :durable true
                    :routing-key "tata"})
 
 (defonce connection (rabbitmq/connect conn-map))

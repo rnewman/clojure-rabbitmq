@@ -2,7 +2,6 @@
 exec java -cp "lib/*:$PWD/*" clojure.main "$0" -- "$@"
 ]
 
-
 (ns rabbitmq-publisher
   (:require [org.clojars.rabbitmq :as rabbitmq]))
 
@@ -14,6 +13,7 @@ exec java -cp "lib/*:$PWD/*" clojure.main "$0" -- "$@"
                    :type "direct"
                    :exchange "sorting-room"
                    :queue "po-box"
+                   :durable true
                    :routing-key "tata"})
 
 (println conn-map)
@@ -23,6 +23,7 @@ exec java -cp "lib/*:$PWD/*" clojure.main "$0" -- "$@"
 (println connection)
 
 (def c (ref 0))
+
 
 (while true
   (dosync (alter c inc))
