@@ -42,7 +42,7 @@ To test publishing of messages, run:
   example/publisher.clj
 
 ## APIs ##
-
+    (rabbitmq/connect connection-map)
     (rabbitmq/bind-channel connection-map channel)
     (rabbitmq/publish connection-map channel message)
 
