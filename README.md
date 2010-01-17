@@ -1,7 +1,7 @@
 # Clojure client for RabbitMQ (AMQP) #
 
 
-## Installation ##
+## INSTALLATION ##
    get lein from http://github.com/technomancy/leiningen
 
    lein deps && lein jar
