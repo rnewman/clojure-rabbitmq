@@ -1,6 +1,7 @@
 target
 local.properties
 classes
+lib
 *.jar
 .*.sw*
 *~

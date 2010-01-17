@@ -1,5 +1,5 @@
-(ns rabbitmq.publisher
-  (:require [com.github.icylisper.rabbitmq :as rabbitmq]))
+(ns rabbitmq-publisher
+  (:require [org.clojars.rabbitmq :as rabbitmq]))
 
 (defonce conn-map {:username "guest"
                    :password "guest"
@@ -10,6 +10,8 @@
                    :exchange "sorting-room"
                    :queue "po-box"
                    :routing-key "tata"})
+
+(println conn-map)
 
 (defonce connection (rabbitmq/connect conn-map))
 

@@ -1,5 +1,5 @@
 (ns rabbitmq.consumer.test
-  (:require [com.github.icylisper.rabbitmq :as rabbitmq]))
+  (:require [org.clojars.rabbitmq :as rabbitmq]))
 
 (defonce conn-map {:username "guest"
                    :password "guest"

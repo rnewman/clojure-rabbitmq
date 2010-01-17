@@ -1,4 +1,4 @@
-(use 'com.github.icylisper.rabbitmq)
+(use 'org.clojars.rabbitmq)
 
 ;; example(1)
 (defonce conn-map {:username "guest"
