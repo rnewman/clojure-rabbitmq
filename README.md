@@ -42,9 +42,19 @@ To test publishing of messages, run:
   example/publisher.clj
 
 ## APIs ##
-    (rabbitmq/connect connection-map)
-    (rabbitmq/bind-channel connection-map channel)
-    (rabbitmq/publish connection-map channel message)
+    (rabbitmq/connect connection-map) -> [connection channel]
+    (rabbitmq/bind-channel connection-map channel) -> bool
+    (rabbitmq/publish connection-map channel message) -> bool
 
-    Note: The consumer part of the client is still under development
+    (rabbitmq/consume-wait connection-map channel) -> message
+    (rabbitmq/consume-poll connection-map channel) -> message
+
+    (rabbitmq/disconnect channel connection)
+
+    Note: The consumer part of the client and other utils are still under development
+
+   
+       
+    
+
      
