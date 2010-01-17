@@ -50,8 +50,9 @@
   (let [msg-bytes (.getBytes m)]
     (.basicPublish ch exchange routing-key nil msg-bytes)))
 
-(defn disconnect [#^Channel ch
-                  #^Connection conn]
+
+(defn disconnect [#^Connection conn
+                  #^Channel ch]
   (.close ch)
   (.close conn))
 

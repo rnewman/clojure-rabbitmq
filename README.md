@@ -49,7 +49,7 @@ To test publishing of messages, run:
     (rabbitmq/consume-wait connection-map channel) -> message
     (rabbitmq/consume-poll connection-map channel) -> message
 
-    (rabbitmq/disconnect channel connection)
+    (rabbitmq/disconnect connection channel)
 
     Note: The consumer part of the client and other utils are still under development
 
