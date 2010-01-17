@@ -22,7 +22,7 @@ Add [clojure-rabbitmq "0.2.1"] to the dependencies list in your project.clj
                        :exchange "sorting-room"
                        :queue "po-box"
                        :durable true
-                       :routing-key "tata"})
+                       :routing-key "<somekey>"})
     (defonce connection (connect conn-map))
     (let [[conn channel] connection]
       (do
