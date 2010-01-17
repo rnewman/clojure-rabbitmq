@@ -1,3 +1,8 @@
+#^:shebang '[
+exec java -cp "lib/*:$PWD/*" clojure.main "$0" -- "$@"
+]
+
+
 (ns rabbitmq-publisher
   (:require [org.clojars.rabbitmq :as rabbitmq]))
 
@@ -14,6 +19,8 @@
 (println conn-map)
 
 (defonce connection (rabbitmq/connect conn-map))
+
+(println connection)
 
 (def c (ref 0))
 

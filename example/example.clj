@@ -12,12 +12,12 @@
                    :routing-key "tata"})
 
 (defonce connection (connect conn-map))
-;; TODO
-;; (m-v-b [conn channel] (connect conn-map))
 
-(let [[conn channel] connection]
-  (bind-channel conn-map channel)
-  (publish conn-map channel "message"))
+(println connection)
+
+;; (let [[conn channel] connection]
+;;   (bind-channel conn-map channel)
+;;   (publish conn-map channel "message"))
 
 
 ;; example(2)
