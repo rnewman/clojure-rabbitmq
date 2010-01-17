@@ -1,6 +1,6 @@
 (set! *warn-on-reflection* true)
 
-(ns com.github.icylisper.rabbitmq
+(ns org.clojars.rabbitmq
   (:gen-class)
   (:import (com.rabbitmq.client
              ConnectionParameters
@@ -50,8 +50,9 @@
   (let [msg-bytes (.getBytes m)]
     (.basicPublish ch exchange routing-key nil msg-bytes)))
 
-(defn disconnect [#^Channel ch
-                  #^Connection conn]
+
+(defn disconnect [#^Connection conn
+                  #^Channel ch]
   (.close ch)
   (.close conn))
 

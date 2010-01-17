@@ -1,5 +1,9 @@
-(ns rabbitmq.publisher
-  (:require [com.github.icylisper.rabbitmq :as rabbitmq]))
+#^:shebang '[
+exec java -cp "lib/*:$PWD/*" clojure.main "$0" -- "$@"
+]
+
+(ns rabbitmq-publisher
+  (:require [org.clojars.rabbitmq :as rabbitmq]))
 
 (defonce conn-map {:username "guest"
                    :password "guest"
@@ -9,11 +13,17 @@
                    :type "direct"
                    :exchange "sorting-room"
                    :queue "po-box"
+                   :durable true
                    :routing-key "tata"})
+
+(println conn-map)
 
 (defonce connection (rabbitmq/connect conn-map))
 
+(println connection)
+
 (def c (ref 0))
+
 
 (while true
   (dosync (alter c inc))
