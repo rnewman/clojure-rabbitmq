@@ -8,9 +8,16 @@
    lein jar
 
    If you are using it as a library within your project using lein:
-     add [clojure-rabbitmq "0.2.1"] to the dependencies list in your project.clj
+     add [clojure-rabbitmq "0.2.1"] to the dependencies list in your
+     project.clj
 
-## API ##
+## API ## 
+    (rabbitmq/bind-channel connection-map channel)
+    (rabbitmq/publish connection-map channel message)
+
+    Note: The consumer part of the client is still under development
+     
+## USAGE & EXAMPLE ##
 
     (ns rabbitmq-publisher-test
        (:require [org.clojars.rabbitmq :as rabbitmq]))
@@ -35,10 +42,7 @@
         (println "rabbitmq publishing:" (format "message%d" @c))
         (rabbitmq/publish conn-map channel (format "message%d" @c))))
     
-
-## Examples ##
-  
-See `example/publisher.clj` and `example/consumer.clj` for usage.
+Also See `example/publisher.clj` and `example/consumer.clj` for usage.
 
 To test connection to the rabbitmq server, run:
   example/test-connection.clj
