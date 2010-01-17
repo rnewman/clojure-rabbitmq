@@ -5,11 +5,13 @@
    get lein from http://github.com/technomancy/leiningen
 
    lein deps
-   
+   lein jar
+
+   If you are using it as a library within your project using lein:
+     add [clojure-rabbitmq "0.2.1"] to the dependencies list in your project.clj
+
 ## API ##
 
-Add [clojure-rabbitmq "0.2.1"] to the dependencies list in your project.clj
-     
     (ns rabbitmq-publisher-test
        (:require [org.clojars.rabbitmq :as rabbitmq]))
 
