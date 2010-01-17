@@ -2,8 +2,6 @@
 
 
 ## INSTALLATION ##
-   get lein from http://github.com/technomancy/leiningen
-
    lein deps && lein jar
 
    If you are using it as a library within your project using lein:
