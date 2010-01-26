@@ -9,7 +9,8 @@
              AMQP
              ConnectionFactory
              Consumer
-             QueueingConsumer)))
+             QueueingConsumer)
+           com.rabbitmq.client.QueueingConsumer$Delivery))
 
 
 ;; abbreviatons:
@@ -56,14 +57,38 @@
   (.close ch)
   (.close conn))
 
+(defn #^String delivery-contents
+  "Return the contents of the Delivery as a String."
+  [#^"QueueingConsumer$Delivery" d]
+  (when d
+    (String. (.getBody d))))
+
+(defn ack-delivery [#^Channel ch
+                    #^"QueueingConsumer$Delivery" d]
+  "Acknowledge a Delivery from the given Channel."
+  (.basicAck ch (.. d getEnvelope getDeliveryTag) false))
+
+(defn delivery-seq
+  "Returns a lazy sequence of deliveries from the queue.
+   The caller is responsible for acking the message and
+   extracting its contents."
+  [#^Channel ch
+   #^QueueingConsumer q]
+  (lazy-seq
+   (let [d (.nextDelivery q)]
+     (cons d (delivery-seq ch q)))))
+
 ;;;; AMQP Queue as a sequence
-(defn delivery-seq [#^Channel ch
-                    #^QueueingConsumer q]
+(defn message-seq
+  "Return a lazy sequence of queue items. Automatically
+   acks each message and returns the content as a string."
+  [#^Channel ch
+   #^QueueingConsumer q]
   (lazy-seq
     (let [d (.nextDelivery q)
-          m (String. (.getBody d))]
-      (.basicAck ch (.. d getEnvelope getDeliveryTag) false)
-      (cons m (delivery-seq ch q)))))
+          m (delivery-contents d)]
+      (ack-delivery ch d)
+      (cons m (message-seq ch q)))))
 
 (defn #^QueueingConsumer
   declare-queue-and-consumer
@@ -71,22 +96,43 @@
   [#^Channel ch queue prefetch]
   (.queueDeclare ch queue)
   (when prefetch
-    (.basicQos ch prefetch)
-    (QueueingConsumer. ch)))
+    (.basicQos ch prefetch))
+  (QueueingConsumer. ch))
 
-(defn queue-seq
-  "Return a sequence of the messages in queue with name queue-name"
-  ([#^Channel ch
-    {:keys [queue prefetch]}]
-     (let [consumer (declare-queue-and-consumer ch queue prefetch)]
-       (.basicConsume ch queue consumer)     
-       (delivery-seq ch consumer)))
+(defmacro with-declared-queue-and-consumer
+  "Macro which establishes a declared queue and consumer, starting
+   basicConsume, then executing the body.
+   `consumer` is bound to the resulting consumer for the duration of the body."
+  [[ch consumer options] & body]
+  `(let [opts#     ~options
+         queue#    (:queue opts#)
+         prefetch# (:prefetch opts#)
+         cch#      ~ch]
+     (let [~consumer (declare-queue-and-consumer cch# queue# prefetch#)]
+       (.basicConsume cch# queue# ~consumer)
+       ~@body)))
+
+(defn queue-delivery-seq
+  "Return a sequence of the Delivery objects in the named queue."
+  ([#^Channel ch opts]
+     (with-declared-queue-and-consumer
+       [ch consumer opts]
+       (delivery-seq ch consumer))))
+
+(defn queue-message-seq
+  "Return a sequence of the messages in queue with name `queue-name`."
+  ([#^Channel ch opts]
+     (with-declared-queue-and-consumer
+       [ch consumer opts]
+       (message-seq ch consumer)))
   
   ([conn
     #^Channel ch
     c]
-   (queue-seq ch c)))
-  
+   (queue-message-seq ch c)))
+
+(defn queue-seq [& args]
+  (apply queue-message-seq args))
 
 ;;; consumer routines
 (defn consume-wait
