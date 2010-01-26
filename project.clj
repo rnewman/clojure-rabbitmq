@@ -4,6 +4,6 @@
                  [org.clojure/clojure-contrib "1.0-SNAPSHOT"]
                  [commons-io "1.2"]
                  [commons-cli "1.1"]
-                 [rabbitmq-client "1.7.0"]]
+                 [org.clojars.icylisper/rabbitmq-client "1.7.0"]]
   ;:dev-dependencies [[leiningen/lein-swank "1.0.0-SNAPSHOT"]]
   )
