@@ -1,4 +1,4 @@
-(defproject clojure-rabbitmq "0.2.1"
+(defproject clojure-rabbitmq "0.3.1"
   :description "rabbitmq client in clojure"
   :dependencies [[org.clojure/clojure "1.1.0"]
                  [org.clojure/clojure-contrib "1.0-SNAPSHOT"]
