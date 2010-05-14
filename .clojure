@@ -1,1 +1,1 @@
-clojure-rabbitmq.jar:lib/commons-cli-1.1.jar:lib/commons-io-1.2.jar:lib/rabbitmq-client.jar
+clojure-rabbitmq.jar:lib/amqp-client-1.7.2.jar:lib/clojure-1.1.0.jar:lib/clojure-contrib-1.1.0.jar:lib/commons-cli-1.2.jar:lib/commons-io-1.4.jar
